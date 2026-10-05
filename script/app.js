@@ -1,6 +1,7 @@
 /* -------------------------------------------------------------------------- */
 // Alle interactieve onderdelen voor onze site. We maken van alle inputs een object met zijn eigen eigenschappen.
-let email = {},
+let fullName = {},
+    email = {},
     password = {},
     signInButton
 /* -------------------------------------------------------------------------- */
@@ -14,6 +15,18 @@ const isValidEmailAddress = function (emailAddress) {
 
 const isEmpty = function (fieldValue) {
     return !fieldValue || fieldValue.length < 1
+}
+
+// Geeft de foutboodschap voor het wachtwoord terug, of een lege string als alles in orde is.
+// Het minimum aantal tekens komt uit het minlength-attribuut in de HTML (-1 als het er niet staat).
+const getPasswordError = function () {
+    if (isEmpty(password.input.value)) {
+        return 'This field is required'
+    }
+    if (password.input.value.length < password.input.minLength) {
+        return `Use at least ${password.input.minLength} characters`
+    }
+    return ''
 }
 /* -------------------------------------------------------------------------- */
 
@@ -34,14 +47,22 @@ const doubleCheckEmailAddress = function () {
 }
 
 const doubleCheckPassword = function () {
-    if (!isEmpty(password.input.value)) {
+    const error = getPasswordError()
+    if (!error) {
         // Stop met dit veld in de gaten te houden; het is in orde.
         password.input.removeEventListener('input', doubleCheckPassword)
         removeErrors(password)
     } else {
-        // Stuk herhalende code.
-        password.errorMessage.innerText = 'This field is required'
+        password.errorMessage.innerText = error
         addErrors(password)
+    }
+}
+
+const doubleCheckName = function () {
+    if (!isEmpty(fullName.input.value)) {
+        // Stop met dit veld in de gaten te houden; het is in orde.
+        fullName.input.removeEventListener('input', doubleCheckName)
+        removeErrors(fullName)
     }
 }
 
@@ -58,6 +79,14 @@ const removeErrors = function (formField) {
 
 /* -------------------------------------------------------------------------- */
 const getDOMElements = function () {
+    // Het naamveld staat enkel op de registratiepagina.
+    fullName.input = document.querySelector('.js-name-input')
+    if (fullName.input) {
+        fullName.label = document.querySelector('.js-name-label')
+        fullName.errorMessage = fullName.label.querySelector('.js-name-error-message')
+        fullName.field = document.querySelector('.js-name-field')
+    }
+
     email.label = document.querySelector('.js-email-label')
     email.errorMessage = email.label.querySelector('.js-email-error-message')
     email.input = document.querySelector('.js-email-input')
@@ -74,6 +103,15 @@ const getDOMElements = function () {
 }
 
 const enableListeners = function () {
+    if (fullName.input) {
+        fullName.input.addEventListener('blur', function () {
+            if (isEmpty(fullName.input.value)) {
+                addErrors(fullName)
+                fullName.input.addEventListener('input', doubleCheckName)
+            }
+        })
+    }
+
     email.input.addEventListener('blur', function () {
         if (!isValidEmailAddress(email.input.value)) {
             if (isEmpty(email.input.value)) {
@@ -90,8 +128,9 @@ const enableListeners = function () {
     })
 
     password.input.addEventListener('blur', function () {
-        if (isEmpty(password.input.value)) {
-            password.errorMessage.innerText = 'This field is required'
+        const error = getPasswordError()
+        if (error) {
+            password.errorMessage.innerText = error
             addErrors(password)
 
             // Gebruik een named function (doubleCheckPassword), om die er weer af te kunnen halen. Dit vermijd ook het dubbel toevoegen ervan.
@@ -105,20 +144,30 @@ const enableListeners = function () {
         // We gaan de form zelf versturen wanneer nodig.
         e.preventDefault()
 
+        const nameIsValid = !fullName.input || !isEmpty(fullName.input.value)
+
         if (
+            nameIsValid &&
             isValidEmailAddress(email.input.value) &&
-            !isEmpty(password.input.value)
+            !getPasswordError()
         ) {
+            if (fullName.input) {
+                removeErrors(fullName)
+            }
             removeErrors(email)
             removeErrors(password)
             console.info('Form is good to go.')
         } else {
+            if (!nameIsValid) {
+                addErrors(fullName)
+                fullName.input.addEventListener('input', doubleCheckName)
+            }
             if (!isValidEmailAddress(email.input.value)) {
                 addErrors(email)
                 email.input.addEventListener('input', doubleCheckEmailAddress)
             }
-            if (isEmpty(password.input.value)) {
-                console.log('Looks empty...')
+            if (getPasswordError()) {
+                password.errorMessage.innerText = getPasswordError()
                 addErrors(password)
                 password.input.addEventListener('input', doubleCheckPassword)
             }

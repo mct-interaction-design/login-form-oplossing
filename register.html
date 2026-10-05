@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Blockport - Sign in</title>
+    <title>Blockport - Create an account</title>
     <meta name="description" content="This is my HTML5 boilerplate.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#e85e00">
@@ -38,8 +38,18 @@
             <form class="c-card" action="#">
                 <div class="c-card__body">
                     <h2 class="c-card__title">
-                        Sign in to your account
+                        Create your account
                     </h2>
+                    <p class="c-form-field js-name-field">
+                        <label class="c-label js-name-label" for="name">
+                            Full name
+                            <span class="c-label__error-message js-name-error-message">
+                                This field is required
+                            </span>
+                        </label>
+                        <input class="c-input js-name-input" type="text" name="name" id="name"
+                            placeholder="e.g. John Doe" autocomplete="name" required />
+                    </p>
                     <p class="c-form-field js-email-field">
                         <label class="c-label js-email-label" for="username">
                             Email address
@@ -61,7 +71,8 @@
                             <input class="
                                         c-input c-input--password-with-toggle
                                         js-password-input
-                                      " type="password" name="password" id="password" required />
+                                      " type="password" name="password" id="password" autocomplete="new-password"
+                                minlength="8" aria-describedby="passwordHint" required />
                             <!-- Password toggle -->
                             <span class="c-password-toggle">
                                 <input id="togglePasswordCheckbox" type="checkbox" class="
@@ -90,12 +101,13 @@
                                 </label>
                             </span>
                         </span>
+                        <span class="c-input-hint" id="passwordHint">Use at least 8 characters.</span>
                     </p>
                     <!-- Custom checkbox -->
                     <p class="c-form-field c-form-field--option">
-                        <input class="o-hide-accessible c-option c-option--hidden js-remember-input" type="checkbox"
-                            id="customRememberme">
-                        <label class="c-label c-label--option c-custom-option js-remember-label" for="customRememberme">
+                        <input class="o-hide-accessible c-option c-option--hidden js-terms-input" type="checkbox"
+                            id="customTerms" required>
+                        <label class="c-label c-label--option c-custom-option js-terms-label" for="customTerms">
                             <span class="c-custom-option__fake-input c-custom-option__fake-input--checkbox">
                                 <svg class="c-custom-option__symbol" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 9 6.75">
@@ -104,22 +116,17 @@
                                         transform="translate(-1.5 -2.75)" />
                                 </svg>
                             </span>
-                            Remember me
+                            <span>I agree to the <a href="#">terms and conditions</a></span>
                         </label>
                     </p>
-                    <p class="u-mb-md">
+                    <p>
                         <!-- Button -->
-                        <button class="o-button-reset c-button js-sign-in-button">Sign in</button>
-                    </p>
-                    <p class="u-text-sm u-align-text-center">
-                        <a href="forgot-password.html">
-                            Forgot password?
-                        </a>
+                        <button class="o-button-reset c-button js-sign-in-button">Create account</button>
                     </p>
                 </div>
                 <div class="c-card__footer">
                     <p class="u-align-text-center u-text-sm u-color-neutral-600">
-                        Don't have an account? <a href="register.html">Create an account</a>
+                        Already have an account? <a href="index.html">Sign in</a>
                     </p>
                 </div>
             </form>
